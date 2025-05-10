@@ -10,6 +10,7 @@ are implemented here.
 - Agents can only edit and delete info of the client they created
 - Master Agent can create, update, delete all clients and agents info
 - Payment records and nominees can be added and managed by agents
+- Guest chat functionality allows visitors to chat with agents without logging in
 
 ## Deploy on localhost
 Assuming **XAMPP** is already installed in your local machine

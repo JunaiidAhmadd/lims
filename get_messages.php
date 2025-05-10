@@ -24,9 +24,21 @@ if (isset($_SESSION["username"])) {
     exit;
 }
 
+// Debug info
+// echo "<p>Debug: Using client_id: $client_id</p>";
+
 // Get messages for this client/guest
+// Add debugging
+echo "<!-- Using client_id: $client_id -->";
+
+// First try to get messages for this specific client
 $sql = "SELECT * FROM messages WHERE client_id = '$client_id' ORDER BY timestamp ASC";
 $result = $conn->query($sql);
+
+// If no results, check if there was a database error
+if ($result === FALSE) {
+    echo "<!-- SQL Error: " . $conn->error . " -->";
+}
 
 if ($result->num_rows > 0) {
     // Output messages

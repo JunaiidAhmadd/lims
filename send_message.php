@@ -46,6 +46,23 @@ if (isset($_SESSION["username"])) {
     // Get a default agent (first agent in the system)
     $sql = "SELECT agent_id FROM agent LIMIT 1";
     $result = $conn->query($sql);
+    
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $agent_id = $row["agent_id"];
+        
+        // Insert message into database
+        $sql = "INSERT INTO messages (client_id, agent_id, message_content, sent_by) 
+                VALUES ('$client_id', '$agent_id', '$message_content', 'guest')";
+        
+        if ($conn->query($sql) === TRUE) {
+            echo "Message sent successfully";
+        } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+        }
+    } else {
+        echo "No agents available";
+    }
 } else {
     // For new guests without a session ID
     $client_id = 'guest_' . time() . '_' . rand(1000, 9999); // Generate a temporary guest ID

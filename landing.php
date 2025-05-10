@@ -91,18 +91,18 @@ include 'connection.php';
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-custom">
     <div class="container">
-        <a class="navbar-brand" href="#">Aegon Life</a>
+        <a class="navbar-brand" href="landing.php">Aegon Life</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
             <span class="navbar-toggler-icon text-light">☰</span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Packages</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">FAQs</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Payment Info</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                <li class="nav-item"><a class="nav-link btn btn-outline-light" href="#">Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="landing.php">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="packages.php">Packages</a></li>
+                <li class="nav-item"><a class="nav-link" href="faq.php">FAQs</a></li>
+                <li class="nav-item"><a class="nav-link" href="payment_info.php">Payment Info</a></li>
+                <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+                <li class="nav-item"><a class="nav-link btn btn-outline-light" href="index.php">Login</a></li>
             </ul>
         </div>
     </div>
@@ -242,6 +242,7 @@ include 'connection.php';
 
 <!-- Scripts -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <!-- Chat Functionality -->
@@ -256,6 +257,7 @@ include 'connection.php';
         z-index: 9999;
         background-color: #fff;
         overflow: hidden;
+        display: block !important;
     }
     .chat-header {
         background-color: #2c3e50;
@@ -274,7 +276,7 @@ include 'connection.php';
         display: none;
     }
     .chat-body.active {
-        display: block;
+        display: block !important;
     }
     .chat-message {
         margin-bottom: 10px;
@@ -298,7 +300,7 @@ include 'connection.php';
         border-top: 1px solid #eee;
     }
     .chat-input.active {
-        display: block;
+        display: block !important;
     }
     .chat-input textarea {
         width: 100%;
@@ -363,6 +365,10 @@ include 'connection.php';
 
 <script>
     $(document).ready(function() {
+        // Show chat window by default for testing
+        $('#chatBody').addClass('active');
+        $('#chatInput').addClass('active');
+        
         // Load messages when page loads
         loadMessages();
         
@@ -374,8 +380,14 @@ include 'connection.php';
             // If chat is opened, load messages
             if ($('#chatBody').hasClass('active')) {
                 loadMessages();
+                console.log('Chat opened');
+            } else {
+                console.log('Chat closed');
             }
         });
+        
+        // Ensure the chat icon is clickable
+        $('.chat-header').css('cursor', 'pointer');
         
         // Send message
         $('#sendMessage').click(function() {
