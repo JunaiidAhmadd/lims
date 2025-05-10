@@ -11,20 +11,19 @@ if (!isset($_SESSION["username"])) {
 $agent_id = $_SESSION["username"];
 
 // Get clients who have sent messages to this agent
-$sql = "SELECT DISTINCT c.client_id, c.name, 
-        (SELECT COUNT(*) FROM messages WHERE client_id = c.client_id AND agent_id = '$agent_id' AND sent_by = 'client' AND is_read = 0) as unread_count,
-        (SELECT message_content FROM messages WHERE client_id = c.client_id AND agent_id = '$agent_id' ORDER BY timestamp DESC LIMIT 1) as last_message,
-        (SELECT timestamp FROM messages WHERE client_id = c.client_id AND agent_id = '$agent_id' ORDER BY timestamp DESC LIMIT 1) as last_timestamp
+$sql = "SELECT DISTINCT c.client_id, c.name,
+        (SELECT COUNT(*) FROM messages WHERE client_id = c.client_id AND agent_id = ? AND sent_by = 'client' AND is_read = 0) as unread_count,
+        (SELECT message_content FROM messages WHERE client_id = c.client_id AND agent_id = ? ORDER BY timestamp DESC LIMIT 1) as last_message,
+        (SELECT timestamp FROM messages WHERE client_id = c.client_id AND agent_id = ? ORDER BY timestamp DESC LIMIT 1) as last_timestamp
         FROM client c
         INNER JOIN messages m ON c.client_id = m.client_id
-        WHERE c.agent_id = '$agent_id'
+        WHERE c.agent_id = ?
         GROUP BY c.client_id
         ORDER BY last_timestamp DESC";
 
-$result = $conn->query($sql);
-
-// Header for clients list
-echo "<div class='list-header' style='padding: 15px; background-color: #f5f5f5; border-bottom: 1px solid #ddd;'>";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ssss", $agent_id, $agent_id, $agent_id, $agent_id);
+$stmt->execute();
 echo "<h4 style='margin: 0;'>Clients</h4>";
 echo "<button class='refresh-button' id='refreshClients'><i class='fa fa-refresh'></i> Refresh</button>";
 echo "</div>";
@@ -42,7 +41,9 @@ if ($result->num_rows > 0) {
 } else {
     // Get all clients assigned to this agent even if they haven't sent messages
     $sql = "SELECT client_id, name FROM client WHERE agent_id = '$agent_id' ORDER BY name";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $agent_id);
+    $stmt->execute();
     
     if ($result->num_rows > 0) {
         while($row = $result->fetch_assoc()) {
@@ -57,6 +58,7 @@ if ($result->num_rows > 0) {
         echo "</div>";
     }
 }
+$stmt->close();
 
 $conn->close();
 ?>

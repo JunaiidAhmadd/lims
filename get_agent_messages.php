@@ -17,10 +17,13 @@ if (empty($client_id)) {
 }
 
 // Verify this client is assigned to this agent
-$sql = "SELECT name FROM client WHERE client_id = '$client_id' AND agent_id = '$agent_id'";
-$result = $conn->query($sql);
+$sql = "SELECT name FROM client WHERE client_id = ? AND agent_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ss", $client_id, $agent_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-if ($result->num_rows == 0) {
+if ($result->num_rows === 0) {
     echo "<div class='no-messages'>You are not authorized to view messages for this client</div>";
     exit;
 }
@@ -28,6 +31,11 @@ if ($result->num_rows == 0) {
 // Get messages between this agent and client
 $sql = "SELECT * FROM messages WHERE client_id = '$client_id' AND agent_id = '$agent_id' ORDER BY timestamp ASC";
 $result = $conn->query($sql);
+$sql = "SELECT * FROM messages WHERE client_id = ? AND agent_id = ? ORDER BY timestamp ASC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ss", $client_id, $agent_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     // Output messages
@@ -43,8 +51,11 @@ if ($result->num_rows > 0) {
         echo "<div class='clearfix'></div>";
     }
     
+    $stmt->close();
+
     // Mark messages as read if they were sent by client
     $sql = "UPDATE messages SET is_read = 1 WHERE client_id = '$client_id' AND agent_id = '$agent_id' AND sent_by = 'client' AND is_read = 0";
+$sql = "UPDATE messages SET is_read = 1 WHERE client_id = ? AND agent_id = ? AND sent_by = 'client' AND is_read = 0";
     $conn->query($sql);
 } else {
     echo "<div class='no-messages'>";
@@ -52,6 +63,10 @@ if ($result->num_rows > 0) {
     echo "<p>No messages yet with this client</p>";
     echo "</div>";
 }
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ss", $client_id, $agent_id);
+$stmt->execute();
+$stmt->close();
 
 $conn->close();
 ?>

@@ -24,16 +24,11 @@ if (isset($_SESSION["username"])) {
     exit;
 }
 
-// Debug info
-// echo "<p>Debug: Using client_id: $client_id</p>";
-
 // Get messages for this client/guest
-// Add debugging
-echo "<!-- Using client_id: $client_id -->";
-
 // First try to get messages for this specific client
-$sql = "SELECT * FROM messages WHERE client_id = '$client_id' ORDER BY timestamp ASC";
-$result = $conn->query($sql);
+$sql = "SELECT * FROM messages WHERE client_id = ? ORDER BY timestamp ASC";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $client_id);
 
 // If no results, check if there was a database error
 if ($result === FALSE) {
@@ -61,8 +56,13 @@ if ($result->num_rows > 0) {
     }
     
     // Mark messages as read if they were sent by agent
-    $sql = "UPDATE messages SET is_read = 1 WHERE client_id = '$client_id' AND sent_by = 'agent' AND is_read = 0";
-    $conn->query($sql);
+    $sql = "UPDATE messages SET is_read = 1 WHERE client_id = ? AND sent_by = 'agent' AND is_read = 0";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $client_id);
+    $stmt->execute();
+    $stmt->close();
+
+
 } else {
     echo "<div class='no-messages'>
             <i class='fa fa-comments-o fa-3x'></i>

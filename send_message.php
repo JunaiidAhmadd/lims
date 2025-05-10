@@ -11,9 +11,6 @@ if (empty($message_content)) {
     exit;
 }
 
-// Sanitize message content to prevent SQL injection
-$message_content = mysqli_real_escape_string($conn, $message_content);
-
 // Check if user is logged in
 if (isset($_SESSION["username"])) {
     // Get client ID from session for logged-in users
@@ -21,15 +18,20 @@ if (isset($_SESSION["username"])) {
     
     // Get agent ID assigned to this client
     $sql = "SELECT agent_id FROM client WHERE client_id = '$client_id'";
-    $result = $conn->query($sql);
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $client_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
     
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $agent_id = $row["agent_id"];
         
         // Insert message into database
-        $sql = "INSERT INTO messages (client_id, agent_id, message_content, sent_by) 
-                VALUES ('$client_id', '$agent_id', '$message_content', 'client')";
+        $sql = "INSERT INTO messages (client_id, agent_id, message_content, sent_by)
+                VALUES (?, ?, ?, 'client')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $client_id, $agent_id, $message_content);
         
         if ($conn->query($sql) === TRUE) {
             echo "Message sent successfully";
@@ -44,16 +46,19 @@ if (isset($_SESSION["username"])) {
     $client_id = $_SESSION["guest_id"];
     
     // Get a default agent (first agent in the system)
-    $sql = "SELECT agent_id FROM agent LIMIT 1";
-    $result = $conn->query($sql);
+    $sql = "SELECT agent_id FROM agent LIMIT 1"; // No input used here, so no need for prepared statement on this specific query.
+    $result = $conn->query($sql); // However, using prepared statements consistently is a good practice.
     
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $agent_id = $row["agent_id"];
         
         // Insert message into database
-        $sql = "INSERT INTO messages (client_id, agent_id, message_content, sent_by) 
-                VALUES ('$client_id', '$agent_id', '$message_content', 'guest')";
+        $sql = "INSERT INTO messages (client_id, agent_id, message_content, sent_by)
+                VALUES (?, ?, ?, 'guest')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $client_id, $agent_id, $message_content);
+
         
         if ($conn->query($sql) === TRUE) {
             echo "Message sent successfully";
@@ -68,16 +73,19 @@ if (isset($_SESSION["username"])) {
     $client_id = 'guest_' . time() . '_' . rand(1000, 9999); // Generate a temporary guest ID
     
     // Get a default agent (first agent in the system)
-    $sql = "SELECT agent_id FROM agent LIMIT 1";
-    $result = $conn->query($sql);
+    $sql = "SELECT agent_id FROM agent LIMIT 1"; // No input used here, so no need for prepared statement on this specific query.
+    $result = $conn->query($sql); // However, using prepared statements consistently is a good practice.
     
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $agent_id = $row["agent_id"];
         
         // Insert message into database
-        $sql = "INSERT INTO messages (client_id, agent_id, message_content, sent_by) 
-                VALUES ('$client_id', '$agent_id', '$message_content', 'guest')";
+        $sql = "INSERT INTO messages (client_id, agent_id, message_content, sent_by)
+                VALUES (?, ?, ?, 'guest')";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sss", $client_id, $agent_id, $message_content);
+
         
         if ($conn->query($sql) === TRUE) {
             // Store the guest ID in a session for continuity

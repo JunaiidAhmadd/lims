@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aegon Life Insurance - FAQs</title>
+
+    <!-- BOOTSTRAP & FONTAWESOME CDN -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>Aegon Life Insurance - FAQs</title>
     <!-- BOOTSTRAP STYLES-->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <!-- FONTAWESOME STYLES-->
@@ -14,6 +18,7 @@
     <link href="assets/css/custom.css" rel="stylesheet">
     <!-- GOOGLE FONTS-->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         .navbar-custom {
             background-color: #2c3e50;
@@ -66,6 +71,21 @@
             border-radius: 5px;
             overflow: hidden;
         }
+        .navbar-custom .navbar-brand,
+        .navbar-custom .nav-link {
+            color: #fff;
+        }
+        .navbar-custom .nav-link:hover {
+            color: #3498db;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
     </style>
 </head>
 <body>
@@ -73,26 +93,16 @@
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
             <a class="navbar-brand" href="landing.php">Aegon Life</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon text-light">☰</span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="landing.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="packages.php">Packages</a>
-                    </li>
-                    <li class="nav-item active">
-                        <a class="nav-link" href="faq.php">FAQs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="payment_info.php">Payment Info</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.php">Contact</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="landing.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="packages.php">Packages</a></li>
+                    <li class="nav-item"><a class="nav-link" href="faq.php">FAQs</a></li>
+                    <li class="nav-item"><a class="nav-link" href="payment_info.php">Payment Info</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-light" href="index.php">Login</a>
                     </li>
@@ -347,12 +357,10 @@
     </footer>
 
     <!-- SCRIPTS -->
-    <script src="assets/js/jquery-1.10.2.js"></script>
-    <script src="assets/js/bootstrap.js"></script>
-    <script src="assets/js/jquery.metisMenu.js"></script>
-    <script src="assets/js/custom.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        // Add active class to current page in navbar
         $(document).ready(function() {
             // Bootstrap 4 accordion functionality
             $('.accordion-button').click(function() {
